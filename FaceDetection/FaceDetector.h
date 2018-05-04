@@ -98,6 +98,17 @@ namespace FaceProject {
 
 				// Post-process
 				float* data = (float*)detections.data;
+				for (size_t i = 0; i < detections.total(); i += 7) {
+					float confidence = data[i + 2];
+					if (confidence > _confThreshold) {
+						int xLeftBottom = (int)data[i + 3] * img.cols;
+						int yLeftBottom = (int)data[i + 4] * img.rows;
+						int xRightTop = (int)data[i + 5] * img.cols;
+						int yRightTop = (int)data[i + 6] * img.rows;
+
+						faces.push_back(cv::Rect(cv::Point(xLeftBottom, yLeftBottom), cv::Point(xRightTop, yRightTop)));
+					}
+				}
 			}
 
 			return faces;
@@ -109,6 +120,7 @@ namespace FaceProject {
 		cv::Size _minSize;
 		cv::CascadeClassifier _faceCascade;
 		cv::dnn::Net _faceSSDNet;
+		float _confThreshold = 0.5f;
 		
 		enum METHOD {
 			CASCADE = 0,
@@ -149,6 +161,7 @@ namespace FaceProject {
 		void Init(const std::string prototxtFile,
 			const std::string caffeModelFile) {
 			_faceSSDNet = cv::dnn::readNetFromCaffe(prototxtFile, caffeModelFile);
+			_imageScale = 1.0;
 			_method = METHOD::DNN;
 		}
 
