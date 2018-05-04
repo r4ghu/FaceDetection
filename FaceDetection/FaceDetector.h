@@ -45,6 +45,10 @@ namespace FaceProject {
 			this->Init(cascadeFile, imageScale, scaleFactor, minNeighbors, minSize);
 		}
 
+		FaceDetector(std::string prototxt, std::string caffeModel) {
+			this->Init(prototxt, caffeModel);
+		}
+
 		/**
 		Returns the closest face to the camera in cv::Rect format.
 
@@ -85,7 +89,17 @@ namespace FaceProject {
 			cv::Mat smallImg = PreProcess(img);
 
 			std::vector<cv::Rect> faces;
-			_faceCascade.detectMultiScale(smallImg, faces, _scaleFactor, _minNeighbors, 0, _minSize);
+			if (_method == METHOD::CASCADE) {
+				_faceCascade.detectMultiScale(smallImg, faces, _scaleFactor, _minNeighbors, 0, _minSize);
+			}
+			else if (_method == METHOD::DNN) {
+				_faceSSDNet.setInput(smallImg);
+				cv::Mat detections = _faceSSDNet.forward();
+
+				// Post-process
+				float* data = (float*)detections.data;
+			}
+
 			return faces;
 		}
 	private:
@@ -94,6 +108,16 @@ namespace FaceProject {
 		int _minNeighbors;
 		cv::Size _minSize;
 		cv::CascadeClassifier _faceCascade;
+		cv::dnn::Net _faceSSDNet;
+		
+		enum METHOD {
+			CASCADE = 0,
+			DNN = 1
+		};
+
+		METHOD _method = METHOD::CASCADE;
+		
+		
 
 		/**
 		Function to initialize all the variables of cascade classifier.
@@ -118,6 +142,14 @@ namespace FaceProject {
 			if (!_faceCascade.load(_cascadeFile)) {
 				std::cerr << "ERROR: Load not success. Face cascade file not found!!!" << std::endl;
 			}
+
+			_method = METHOD::CASCADE;
+		}
+
+		void Init(const std::string prototxtFile,
+			const std::string caffeModelFile) {
+			_faceSSDNet = cv::dnn::readNetFromCaffe(prototxtFile, caffeModelFile);
+			_method = METHOD::DNN;
 		}
 
 		/**
@@ -127,23 +159,35 @@ namespace FaceProject {
 		@return The pre-processed image.
 		*/
 		cv::Mat PreProcess(cv::Mat& img) {
-			// Convert to gray scale if needed
-			cv::Mat gray;
-			if (img.channels() == 1) gray = img.clone();
-			else cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
 
-			// Resize image as per the given scale and pre-process
-			cv::Mat smallImg;
-			int w = (int)img.cols / _imageScale;
-			int h = (int)img.rows / _imageScale;
-			if (_imageScale != 1.0) {
-				cv::resize(gray, smallImg, cv::Size(w, h), 0, 0, cv::INTER_AREA);
+			if (_method == METHOD::CASCADE) {
+				// Convert to gray scale if needed
+				cv::Mat gray;
+				if (img.channels() == 1) gray = img.clone();
+				else cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+
+				// Resize image as per the given scale and pre-process
+				cv::Mat smallImg;
+				int w = (int)img.cols / _imageScale;
+				int h = (int)img.rows / _imageScale;
+				if (_imageScale != 1.0) {
+					cv::resize(gray, smallImg, cv::Size(w, h), 0, 0, cv::INTER_AREA);
+				}
+				else {
+					smallImg = gray;
+				}
+				cv::equalizeHist(smallImg, smallImg);
+				return smallImg;
 			}
-			else {
-				smallImg = gray;
+
+			else if (_method == METHOD::DNN) {
+				cv::Mat inputBlob = cv::dnn::blobFromImage(img, 1.0, 
+													cv::Size(300, 300), 
+													cv::Scalar(104.0, 177.0, 123.0), 
+													false, false);
+				return inputBlob;
 			}
-			cv::equalizeHist(smallImg, smallImg);
-			return smallImg;
+			
 		}
 	};
 }
