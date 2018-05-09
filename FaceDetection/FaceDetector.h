@@ -101,10 +101,10 @@ namespace FaceProject {
 				for (size_t i = 0; i < detections.total(); i += 7) {
 					float confidence = data[i + 2];
 					if (confidence > _confThreshold) {
-						int xLeftBottom = (int)data[i + 3] * img.cols;
-						int yLeftBottom = (int)data[i + 4] * img.rows;
-						int xRightTop = (int)data[i + 5] * img.cols;
-						int yRightTop = (int)data[i + 6] * img.rows;
+						int xLeftBottom = (int)(data[i + 3] * img.cols);
+						int yLeftBottom = (int)(data[i + 4] * img.rows);
+						int xRightTop = (int)(data[i + 5] * img.cols);
+						int yRightTop = (int)(data[i + 6] * img.rows);
 
 						faces.push_back(cv::Rect(cv::Point(xLeftBottom, yLeftBottom), cv::Point(xRightTop, yRightTop)));
 					}
