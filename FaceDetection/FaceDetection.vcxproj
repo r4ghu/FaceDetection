@@ -23,7 +23,7 @@
     <ProjectGuid>{AA98866D-5AB5-47E0-B08D-0BD60E89CF35}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>FaceDetection</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -152,10 +152,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)external\lib\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_aruco400.lib;opencv_bgsegm400.lib;opencv_bioinspired400.lib;opencv_calib3d400.lib;opencv_ccalib400.lib;opencv_core400.lib;opencv_datasets400.lib;opencv_dnn_objdetect400.lib;opencv_dnn400.lib;opencv_dpm400.lib;opencv_face400.lib;opencv_features2d400.lib;opencv_flann400.lib;opencv_fuzzy400.lib;opencv_hfs400.lib;opencv_highgui400.lib;opencv_img_hash400.lib;opencv_imgcodecs400.lib;opencv_imgproc400.lib;opencv_line_descriptor400.lib;opencv_ml400.lib;opencv_objdetect400.lib;opencv_optflow400.lib;opencv_phase_unwrapping400.lib;opencv_photo400.lib;opencv_plot400.lib;opencv_reg400.lib;opencv_rgbd400.lib;opencv_saliency400.lib;opencv_shape400.lib;opencv_stereo400.lib;opencv_stitching400.lib;opencv_structured_light400.lib;opencv_superres400.lib;opencv_surface_matching400.lib;opencv_text400.lib;opencv_tracking400.lib;opencv_video400.lib;opencv_videoio400.lib;opencv_videostab400.lib;opencv_xfeatures2d400.lib;opencv_ximgproc400.lib;opencv_xobjdetect400.lib;opencv_xphoto400.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world400.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)external\bin\*400.dll" "$(TargetDir)"</Command>
+      <Command>copy "$(SolutionDir)external\bin\*.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

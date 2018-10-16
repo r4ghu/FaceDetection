@@ -163,7 +163,7 @@ CV_EXPORTS   void groupRectangles_meanshift(std::vector<Rect>& rectList, std::ve
                                             std::vector<double>& foundScales,
                                             double detectThreshold = 0.0, Size winDetSize = Size(64, 128));
 
-template<> CV_EXPORTS void DefaultDeleter<CvHaarClassifierCascade>::operator ()(CvHaarClassifierCascade* obj) const;
+template<> struct DefaultDeleter<CvHaarClassifierCascade>{ CV_EXPORTS void operator ()(CvHaarClassifierCascade* obj) const; };
 
 enum { CASCADE_DO_CANNY_PRUNING    = 1,
        CASCADE_SCALE_IMAGE         = 2,
@@ -215,7 +215,7 @@ public:
     virtual Ptr<MaskGenerator> getMaskGenerator() = 0;
 };
 
-/** @example facedetect.cpp
+/** @example samples/cpp/facedetect.cpp
 This program demonstrates usage of the Cascade classifier class
 \image html Cascade_Classifier_Tutorial_Result_Haar.jpg "Sample screenshot" width=321 height=254
 */
@@ -372,10 +372,12 @@ http://www.learnopencv.com/handwritten-digits-classification-an-opencv-c-python-
 struct CV_EXPORTS_W HOGDescriptor
 {
 public:
-    enum { L2Hys = 0 //!< Default histogramNormType
+    enum HistogramNormType { L2Hys = 0 //!< Default histogramNormType
          };
     enum { DEFAULT_NLEVELS = 64 //!< Default nlevels value.
          };
+    enum DescriptorStorageFormat { DESCR_FORMAT_COL_BY_COL, DESCR_FORMAT_ROW_BY_ROW };
+
     /**@brief Creates the HOG descriptor and detector with default params.
 
     aqual to HOGDescriptor(Size(64,128), Size(16,16), Size(8,8), Size(8,8), 9, 1 )
@@ -402,7 +404,7 @@ public:
     */
     CV_WRAP HOGDescriptor(Size _winSize, Size _blockSize, Size _blockStride,
                   Size _cellSize, int _nbins, int _derivAperture=1, double _winSigma=-1,
-                  int _histogramNormType=HOGDescriptor::L2Hys,
+                  HOGDescriptor::HistogramNormType _histogramNormType=HOGDescriptor::L2Hys,
                   double _L2HysThreshold=0.2, bool _gammaCorrection=false,
                   int _nlevels=HOGDescriptor::DEFAULT_NLEVELS, bool _signedGradient=false)
     : winSize(_winSize), blockSize(_blockSize), blockStride(_blockStride), cellSize(_cellSize),
@@ -443,7 +445,7 @@ public:
     */
     CV_WRAP double getWinSigma() const;
 
-    /**@example peopledetect.cpp
+    /**@example samples/cpp/peopledetect.cpp
     */
     /**@brief Sets coefficients for the linear SVM classifier.
     @param _svmdetector coefficients for the linear SVM classifier.
@@ -478,7 +480,7 @@ public:
     */
     virtual void copyTo(HOGDescriptor& c) const;
 
-    /**@example train_HOG.cpp
+    /**@example samples/cpp/train_HOG.cpp
     */
     /** @brief Computes HOG descriptors of given image.
     @param img Matrix of the type CV_8U containing an image where HOG features will be calculated.
@@ -575,7 +577,7 @@ public:
     */
     CV_WRAP static std::vector<float> getDefaultPeopleDetector();
 
-    /**@example hog.cpp
+    /**@example samples/tapi/hog.cpp
     */
     /** @brief Returns coefficients of the classifier trained for people detection (for 48x96 windows).
     */
@@ -603,7 +605,7 @@ public:
     CV_PROP double winSigma;
 
     //! histogramNormType
-    CV_PROP int histogramNormType;
+    CV_PROP HOGDescriptor::HistogramNormType histogramNormType;
 
     //! L2-Hys normalization method shrinkage.
     CV_PROP double L2HysThreshold;
@@ -669,6 +671,29 @@ public:
     */
     void groupRectangles(std::vector<cv::Rect>& rectList, std::vector<double>& weights, int groupThreshold, double eps) const;
 };
+
+class CV_EXPORTS QRCodeDetector
+{
+public:
+    QRCodeDetector();
+    ~QRCodeDetector();
+
+    void setEpsX(double epsX);
+    void setEpsY(double epsY);
+
+    bool detect(InputArray in, OutputArray points) const;
+protected:
+    struct Impl;
+    Ptr<Impl> p;
+};
+
+/** @brief Detect QR code in image and return minimum area of quadrangle that describes QR code.
+    @param in  Matrix of the type CV_8UC1 containing an image where QR code are detected.
+    @param points Output vector of vertices of a quadrangle of minimal area that describes QR code.
+    @param eps_x Epsilon neighborhood, which allows you to determine the horizontal pattern of the scheme 1:1:3:1:1 according to QR code standard.
+    @param eps_y Epsilon neighborhood, which allows you to determine the vertical pattern of the scheme 1:1:3:1:1 according to QR code standard.
+    */
+CV_EXPORTS bool detectQRCode(InputArray in, std::vector<Point> &points, double eps_x = 0.2, double eps_y = 0.1);
 
 //! @} objdetect
 
