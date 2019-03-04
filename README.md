@@ -4,6 +4,10 @@
 
 FaceDetection is a repository to experiment on face detectors.
 
+## Requirements
+
+- Visual Studio 2017 and above
+
 
 ## Author
 
