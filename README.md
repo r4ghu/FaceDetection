@@ -2,7 +2,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/w67uchteql25jw7y/branch/master?svg=true)](https://ci.appveyor.com/project/r4ghu/facedetection/branch/master)
 
-FaceDetection is a repository to experiment on face detectors.
+FaceDetection is a repository to experiment on face detectors. A potential use case for this project is automatic face detection when editing images.
 
 ## Requirements
 
