@@ -17,6 +17,9 @@ FaceDetection is a repository to experiment on face detectors.
 4) Build solution in Visual Studio under Build Tab > Build Solution or CTRL+SHIFT+B
 5) Run the executable
 
+## License
+
+This project is licensed under the GNU General Public License v3.0.
 
 ## Author
 
