@@ -17,6 +17,11 @@ FaceDetection is a repository to experiment on face detectors.
 4) Build solution in Visual Studio under Build Tab > Build Solution or CTRL+SHIFT+B
 5) Run the executable
 
+## Contributing
+
+1) Make issue about the changes to be made
+2) Add the changes to your own branch
+3) Create a pull request detailing the changes made and referencing the issue to be fixed
 
 ## Author
 
